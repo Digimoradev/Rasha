@@ -1230,19 +1230,20 @@ body[data-active-section="contact"] .nebula-1 { filter: brightness(1.2); }
         width: 92vw;
         max-width: 1200px;
         height: 85vh;
-        background: rgba(15, 15, 30, 0.85);
+        max-height: 800px; /* Safety cap */
+        background: rgba(15, 15, 25, 0.85);
         backdrop-filter: blur(120px) saturate(300%);
         -webkit-backdrop-filter: blur(120px) saturate(300%);
         z-index: 10002;
         opacity: 0;
         pointer-events: none;
-        transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         display: grid;
-        grid-template-columns: 1fr 280px; /* SIDEBAR BACK TO RIGHT */
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 12px;
+        grid-template-columns: 1fr 280px; 
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 60px 180px rgba(0,0,0,0.8);
+        box-shadow: 0 80px 200px rgba(0,0,0,0.9);
     }
 
     .chatbot-modal.active {
@@ -1253,72 +1254,101 @@ body[data-active-section="contact"] .nebula-1 { filter: brightness(1.2); }
 
     /* --- Sidebar (Right - Identity) --- */
     .modal-sidebar {
-        background: rgba(255, 255, 255, 0.03);
-        border-left: 1px solid rgba(255, 255, 255, 0.05); /* Border on Left */
-        padding: 3rem;
+        background: rgba(255, 255, 255, 0.02);
+        border-left: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 2.5rem;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        position: relative;
-        text-align: left; /* MAINTAIN LEFT for English ID */
+        align-items: flex-start; 
+        order: 2; 
+        direction: ltr; /* CRITICAL: Force LTR so flex-start = Left */
     }
 
     .sidebar-top {
         display: flex;
         flex-direction: column;
         gap: 2rem;
+        align-items: flex-start; /* FORCE INTERNAL LEFT */
+        width: 100%;
     }
 
     .btn-close {
-        background: transparent;
+        background: rgba(255,255,255,0.05);
         border: none;
-        color: rgba(255,255,255,0.4);
-        font-size: 1.5rem;
+        color: #fff;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         cursor: pointer;
-        align-self: flex-start;
-        margin-left: -1rem;
-        transition: color 0.3s ease;
+        transition: all 0.3s ease;
+        margin: 0; /* Clear any previous alignment margins */
     }
 
-    .btn-close:hover { color: #fff; }
+    .btn-close:hover { background: rgba(255,255,255,0.1); transform: rotate(90deg); }
 
     .sidebar-identity {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.25rem;
         padding-top: 1rem;
     }
 
-    .sidebar-identity .agent-tag {
-        font-family: 'Space Mono', monospace; /* Technical font */
-        font-size: 0.75rem;
-        font-weight: 500;
-        color: var(--accent-p);
-        letter-spacing: 2px;
+    .agent-name {
+        font-family: var(--font-heading);
+        font-size: 1.75rem;
+        font-weight: 950;
+        color: #fff;
+        line-height: 1.1;
+        margin-bottom: 0.75rem;
+        letter-spacing: -1px;
+    }
+
+    .agent-type {
+        font-family: 'Space Mono', monospace;
+        font-size: 0.65rem;
+        font-weight: 400;
+        color: rgba(255,255,255,0.4);
+        letter-spacing: 5px;
         text-transform: uppercase;
-        background: rgba(139, 92, 246, 0.05);
-        padding: 8px 16px;
-        border: 1px solid rgba(139, 92, 246, 0.3);
-        display: inline-block;
-        width: fit-content;
-        position: relative;
-        clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%); /* Futuristic shape */
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-left: 2px;
+    }
+
+    .agent-type::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: var(--accent-p);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--accent-p);
     }
 
     .sidebar-bottom {
         display: flex;
         flex-direction: column;
-        gap: 2.5rem;
-        align-items: flex-start; /* Internal Left-Alignment */
-        text-align: left;
+        gap: 2rem;
+        align-items: flex-start; /* FORCE INTERNAL LEFT */
+        width: 100%;
     }
 
     .status-badge {
         display: flex;
         align-items: center;
         gap: 12px;
+        font-size: 0.6rem;
+        font-family: var(--font-ui);
+        color: rgba(255,255,255,0.5);
+        letter-spacing: 2px;
+        background: rgba(255,255,255,0.03);
         padding: 8px 16px;
-        border-radius: 4px; /* More techie shape than capsule */
+        border: 1px solid rgba(255,255,255,0.05);
+        text-transform: uppercase;
     }
 
     .status-indicator {
@@ -1339,72 +1369,76 @@ body[data-active-section="contact"] .nebula-1 { filter: brightness(1.2); }
         animation: pulse-status 2s infinite;
     }
 
-    @keyframes pulse-status {
-        0% { transform: scale(1); opacity: 0.4; }
-        100% { transform: scale(2.5); opacity: 0; }
-    }
-
     .social-mini {
         display: flex;
-        gap: 1.25rem;
-        font-size: 1.1rem;
-        color: rgba(255,255,255,0.4);
+        gap: 1.5rem;
+        font-size: 1.25rem;
+        color: rgba(255,255,255,0.3);
     }
+
+    .social-mini a:hover { color: var(--accent-p); }
 
     /* --- Chat Main Area (Left) --- */
     .modal-main {
         display: flex;
         flex-direction: column;
         background: rgba(0,0,0,0.1);
+        min-width: 0; /* Fix flex overflow */
+        order: 1; /* Main on Left */
     }
 
     .chat-log {
         flex: 1;
-        padding: 4rem;
+        padding: 3rem;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
         gap: 2rem;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.1) transparent;
     }
 
     .ai-message, .user-message {
-        max-width: 70%;
-        padding: 1.25rem 1.75rem;
+        max-width: 85%;
+        padding: 1.5rem;
         border-radius: 12px;
-        font-size: 0.9rem;
-        line-height: 1.8;
+        font-size: 0.95rem;
+        line-height: 1.7;
     }
 
     .ai-message {
         align-self: flex-start;
-        background: rgba(139, 92, 246, 0.12);
+        background: rgba(139, 92, 246, 0.1);
         color: #10b981; 
-        border-radius: 12px 12px 12px 0;
-        text-align: right;
-        border: 1px solid rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.1);
     }
 
     .user-message {
         align-self: flex-end;
-        background: rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.05);
         color: #fff;
-        border-radius: 12px 12px 0 12px;
-        text-align: right;
-        border: 1px solid rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.05);
     }
 
     .input-container {
-        padding: 3rem 4rem;
+        padding: 2.5rem 3rem;
+        border-top: 1px solid rgba(255,255,255,0.05);
     }
 
     .input-wrapper {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
         border-radius: 50px;
         display: flex;
         align-items: center;
         padding: 0.5rem 1.5rem;
         gap: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .input-wrapper:focus-within {
+        border-color: var(--accent-p);
+        background: rgba(255,255,255,0.05);
     }
 
     .chat-input {
@@ -1412,8 +1446,8 @@ body[data-active-section="contact"] .nebula-1 { filter: brightness(1.2); }
         background: transparent;
         border: none;
         color: #fff;
-        padding: 0.75rem 0;
-        font-size: 0.9rem;
+        padding: 1rem 0;
+        font-size: 0.95rem;
         outline: none;
         text-align: right;
     }
@@ -1424,19 +1458,6 @@ body[data-active-section="contact"] .nebula-1 { filter: brightness(1.2); }
         color: var(--accent-p);
         font-size: 1.5rem;
         cursor: pointer;
-        transition: transform 0.3s ease;
-    }
-
-    .btn-send:hover { transform: scale(1.1) rotate(-15deg); }
-
-    @media (max-width: 1024px) {
-        .chatbot-modal { grid-template-columns: 1fr; width: 95vw; height: 92vh; }
-        .modal-sidebar { display: none; }
-        .chat-log, .input-container { padding: 2rem; }
-    }
-
-    @media (max-width: 1024px) {
-        .chatbot-modal { width: 95vw; height: 85vh; padding: 0.5rem; }
         .chat-log, .modal-header, .chat-input-area { padding: 2rem; }
     }
     </style>
@@ -1474,32 +1495,15 @@ body[data-active-section="contact"] .nebula-1 { filter: brightness(1.2); }
         <div class="chatbot-overlay" id="chatbot-overlay"></div>
 
         <div class="chatbot-modal" id="chatbot-modal">
-            <!-- Main Chat Area (Left) -->
-            <div class="modal-main">
-                <div class="chat-log" id="chat-log">
-                    <div class="ai-message">
-                        <p>أهلاً بك. أنا النسخة الرقمية لـ رشا محمد. كيف أستطيع مساعدتك اليوم؟</p>
-                    </div>
-                </div>
-
-                <div class="input-container">
-                    <div class="input-wrapper">
-                        <input type="text" id="chat-input" class="chat-input" placeholder="اكتب هنا...">
-                        <button id="chat-send-btn" class="btn-send">
-                            <i class="ri-send-plane-2-fill"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sidebar (Right - Identity) -->
+            <!-- Sidebar (Integrated Identification) -->
             <div class="modal-sidebar">
                 <div class="sidebar-top">
                     <button id="chatbot-close" class="btn-close" aria-label="Close Window">
                         <i class="ri-close-line"></i>
                     </button>
                     <div class="sidebar-identity">
-                        <span class="agent-tag">AI_AGENT - Janah</span>
+                        <h3 class="agent-name">Rasha<br>Mohamed</h3>
+                        <span class="agent-type">AI Agent "Janah"</span>
                     </div>
                 </div>
 
@@ -1512,6 +1516,24 @@ body[data-active-section="contact"] .nebula-1 { filter: brightness(1.2); }
                         <a href="#"><i class="ri-linkedin-box-fill"></i></a>
                         <a href="#"><i class="ri-instagram-line"></i></a>
                         <a href="#"><i class="ri-whatsapp-line"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Chat Interface -->
+            <div class="modal-main">
+                <div class="chat-log" id="chat-log">
+                    <div class="ai-message">
+                        <p>أهلاً بك. أنا جنة، المساعدة الذكية الخاصة برشا. كيف يمكنني مساعدتك اليوم؟</p>
+                    </div>
+                </div>
+
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <input type="text" id="chat-input" class="chat-input" placeholder="اكتب رسالتك لـ جنة هنا...">
+                        <button id="chat-send-btn" class="btn-send">
+                            <i class="ri-send-plane-2-fill"></i>
+                        </button>
                     </div>
                 </div>
             </div>
