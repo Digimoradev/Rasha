@@ -1227,10 +1227,10 @@ body[data-active-section="contact"] .nebula-1 { filter: brightness(1.2); }
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%) scale(0.9);
-        width: 92vw;
-        max-width: 1200px;
+        width: 94vw;
+        max-width: 1240px;
         height: 85vh;
-        max-height: 800px; /* Safety cap */
+        max-height: 820px;
         background: rgba(15, 15, 25, 0.85);
         backdrop-filter: blur(120px) saturate(300%);
         -webkit-backdrop-filter: blur(120px) saturate(300%);
@@ -1241,9 +1241,13 @@ body[data-active-section="contact"] .nebula-1 { filter: brightness(1.2); }
         display: grid;
         grid-template-columns: 1fr 280px; 
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 16px;
+        border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 80px 200px rgba(0,0,0,0.9);
+        box-shadow: 0 100px 250px rgba(0,0,0,0.9);
+        
+        /* Reset any potential mobile leaks */
+        bottom: auto;
+        right: auto;
     }
 
     .chatbot-modal.active {
@@ -1465,8 +1469,104 @@ body[data-active-section="contact"] .nebula-1 { filter: brightness(1.2); }
         color: var(--accent-p);
         font-size: 1.5rem;
         cursor: pointer;
-        .chat-log, .modal-header, .chat-input-area { padding: 2rem; }
     }
+
+    @media (max-width: 1024px) {
+        .chatbot-modal {
+            grid-template-columns: 1fr;
+            width: 100vw;
+            height: 100vh;
+            max-width: none;
+            max-height: none;
+            border-radius: 0;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            transform: none !important;
+            border: none;
+        }
+        
+        .modal-sidebar {
+            display: none !important;
+        }
+
+        .modal-main {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+
+        .mobile-chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            flex-shrink: 0;
+        }
+
+        .mobile-identity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mobile-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #10b981;
+        }
+
+        .mobile-name {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .btn-close-mobile {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: #fff;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .chat-log {
+            padding: 1.5rem;
+            gap: 1.5rem;
+            flex: 1;
+        }
+
+        .ai-message, .user-message {
+            max-width: 92%;
+            font-size: 0.9rem;
+            padding: 1rem 1.25rem;
+        }
+
+        .input-container {
+            padding: 1.25rem;
+            background: rgba(0,0,0,0.3);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+    }
+
+    /* Desktop header hidden */
+    .mobile-chat-header { display: none; }
+
+    .chat-log, .modal-header, .chat-input-area { padding: 2rem; }
     </style>
 </head>
 <body class="is-loading">
@@ -1529,7 +1629,18 @@ body[data-active-section="contact"] .nebula-1 { filter: brightness(1.2); }
 
             <!-- Main Chat Interface -->
             <div class="modal-main">
-                <div class="chat-log" id="chat-log">
+                <!-- Mobile Only Header -->
+                <div class="mobile-chat-header">
+                    <div class="mobile-identity">
+                        <div class="mobile-dot"></div>
+                        <span class="mobile-name">Janah AI</span>
+                    </div>
+                    <button class="btn-close-mobile" id="closeChatMobile" aria-label="Close Chat">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+
+                <div class="chat-log" id="chatLog">
                     <div class="ai-message">
                         <p>أهلاً بك. أنا جنة، المساعدة الذكية الخاصة برشا. كيف يمكنني مساعدتك اليوم؟</p>
                     </div>
@@ -1983,9 +2094,8 @@ function initChatbot() {
     const trigger = document.getElementById('chatbot-trigger');
     const modal = document.getElementById('chatbot-modal');
     const overlay = document.getElementById('chatbot-overlay');
-    const closeBtn = document.getElementById('chatbot-close');
     const chatInput = document.getElementById('chat-input');
-    const chatLog = document.getElementById('chat-log');
+    const chatLog = document.getElementById('chatLog'); // Updated ID to chatLog
     const sendBtn = document.getElementById('chat-send-btn');
 
     if (!trigger) return;
@@ -1996,12 +2106,23 @@ function initChatbot() {
         chatInput?.focus();
     });
 
+    // Close Handlers
+    const closeBtn = document.getElementById('chatbot-close'); // Desktop close button
+    const closeBtnMobile = document.getElementById('closeChatMobile'); // Mobile close button
+    
     const closeHandler = () => {
         modal.classList.remove('active');
         overlay.classList.remove('active');
+        // Optional: Hide modal completely after transition for accessibility/performance
+        setTimeout(() => {
+            if (!modal.classList.contains('active')) { // Only hide if it's still not active
+                modal.style.display = 'none';
+            }
+        }, 600); // Match transition duration
     };
 
     closeBtn?.addEventListener('click', closeHandler);
+    closeBtnMobile?.addEventListener('click', closeHandler); // Wire mobile close button
     overlay?.addEventListener('click', closeHandler);
 
     let chatHistory = [];
