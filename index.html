@@ -1389,35 +1389,42 @@ body[data-active-section="contact"] .nebula-1 { filter: brightness(1.2); }
 
     .chat-log {
         flex: 1;
-        padding: 3rem;
+        padding: 2.5rem;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        gap: 2rem;
+        gap: 2.5rem;
         scrollbar-width: thin;
         scrollbar-color: rgba(255,255,255,0.1) transparent;
+        direction: ltr; /* CRITICAL: Force LTR for flex alignment logic */
     }
 
     .ai-message, .user-message {
-        max-width: 85%;
-        padding: 1.5rem;
+        max-width: 82%;
+        width: fit-content;
+        padding: 1.25rem 1.75rem;
         border-radius: 12px;
         font-size: 0.95rem;
-        line-height: 1.7;
+        line-height: 1.6;
+        direction: rtl; /* Arabic text flow */
+        word-wrap: break-word; /* Prevent stretching */
+        overflow-wrap: break-word;
     }
 
     .ai-message {
-        align-self: flex-start;
+        align-self: flex-start; /* LEFT */
         background: rgba(139, 92, 246, 0.1);
         color: #10b981; 
         border: 1px solid rgba(16, 185, 129, 0.1);
+        border-bottom-left-radius: 2px;
     }
 
     .user-message {
-        align-self: flex-end;
+        align-self: flex-end; /* RIGHT */
         background: rgba(255, 255, 255, 0.05);
         color: #fff;
         border: 1px solid rgba(255,255,255,0.05);
+        border-bottom-right-radius: 2px;
     }
 
     .input-container {
